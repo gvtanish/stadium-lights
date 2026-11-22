@@ -30,7 +30,7 @@ COPY packages/shared/package*.json ./packages/shared/
 COPY apps/server/package*.json ./apps/server/
 
 # Install production dependencies only
-RUN npm ci --omit=dev
+RUN npm ci --omit=dev --ignore-scripts
 
 # Copy built files from builder
 COPY --from=builder /app/packages/shared/dist ./packages/shared/dist
