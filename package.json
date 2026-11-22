@@ -7,6 +7,7 @@
     "apps/*"
   ],
   "scripts": {
+    "build": "npm run build:shared && npm run build:server",
     "dev:server": "npm run dev -w @stadium-lights/server",
     "dev:mobile": "npm run start -w @stadium-lights/mobile",
     "build:shared": "npm run build -w @stadium-lights/shared",

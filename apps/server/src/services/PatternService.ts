@@ -22,7 +22,7 @@ export class PatternService implements IPatternService {
   }
 
   getPattern(id: PatternType): PatternInfo | null {
-    return PATTERN_CATALOG.find((p) => p.id === id) || null;
+    return PATTERN_CATALOG.find((p: PatternInfo) => p.id === id) || null;
   }
 
   generateExecution(

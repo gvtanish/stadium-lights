@@ -27,7 +27,7 @@ describe('School Annual Day Patterns', () => {
 
     // Verify first step has an active state with torch color
     const firstStep = schedule[0];
-    const activeZone = firstStep.find((s) => s.isOn);
+    const activeZone = firstStep.find((s: ZoneState) => s.isOn);
     expect(activeZone).toBeDefined();
     expect(activeZone?.color).toBeDefined();
   });
@@ -57,7 +57,7 @@ describe('School Annual Day Patterns', () => {
 
     // Verify zones are turned on with brightness variations
     const firstStep = schedule[0];
-    expect(firstStep.some((s) => s.isOn)).toBe(true);
+    expect(firstStep.some((s: ZoneState) => s.isOn)).toBe(true);
   });
 
   it('SchoolPridePattern creates alternating primary and secondary colors', () => {
