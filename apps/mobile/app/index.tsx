@@ -242,8 +242,8 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Stadium Lights</Text>
-      <Text style={styles.subtitle}>Sync your light with the crowd</Text>
+      <Text style={styles.title}>Annual Day Light Show</Text>
+      <Text style={styles.subtitle}>Outdoor Stage &amp; 400m Track Lights</Text>
 
       <TouchableOpacity
         style={styles.myGroupsLink}
@@ -253,10 +253,10 @@ export default function HomeScreen() {
       </TouchableOpacity>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Create a Group</Text>
+        <Text style={styles.sectionTitle}>Stage Controller Setup</Text>
         <TextInput
           style={styles.input}
-          placeholder="Custom code (optional, e.g. COLDPLAY2024)"
+          placeholder="Custom code (e.g. ANNUAL2024)"
           placeholderTextColor="#666"
           value={customCode}
           onChangeText={(text) => setCustomCode(text.toUpperCase())}

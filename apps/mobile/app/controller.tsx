@@ -22,7 +22,8 @@ import {
   shouldShowControllerOnboarding,
 } from '../src/components/ControllerOnboarding';
 
-const DEEP_LINK_BASE_URL = 'https://go.stadiumlights.io';
+const SERVER_URL = process.env.EXPO_PUBLIC_SERVER_URL || 'http://localhost:3000';
+const DEEP_LINK_BASE_URL = `${SERVER_URL}/join`;
 const { width: screenWidth } = Dimensions.get('window');
 
 export default function ControllerScreen() {

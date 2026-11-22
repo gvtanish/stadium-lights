@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { PatternType, StadiumBounds, Zone } from '@stadium-lights/shared';
+import { PatternType, StadiumBounds, Zone, ZoneState } from '@stadium-lights/shared';
 import { ZoneService } from '../services/ZoneService';
 import { TrackRelayPattern } from './TrackRelayPattern';
 import { HouseBattlePattern } from './HouseBattlePattern';
@@ -41,8 +41,8 @@ describe('School Annual Day Patterns', () => {
     expect(offsets.length).toBeGreaterThan(0);
 
     // Verify house states exist with colors
-    const hasColoredZone = Object.values(schedule).some((states) =>
-      states.some((s) => s.isOn && s.color !== undefined)
+    const hasColoredZone = (Object.values(schedule) as ZoneState[][]).some((states: ZoneState[]) =>
+      states.some((s: ZoneState) => s.isOn && s.color !== undefined)
     );
     expect(hasColoredZone).toBe(true);
   });
@@ -71,8 +71,8 @@ describe('School Annual Day Patterns', () => {
     const offsets = Object.keys(schedule).map(Number);
     expect(offsets.length).toBeGreaterThan(0);
 
-    const statesWithColors = Object.values(schedule).flatMap((states) =>
-      states.filter((s) => s.isOn && s.color)
+    const statesWithColors = (Object.values(schedule) as ZoneState[][]).flatMap((states: ZoneState[]) =>
+      states.filter((s: ZoneState) => s.isOn && s.color)
     );
     expect(statesWithColors.some((s) => s.color === '#1D3557')).toBe(true);
     expect(statesWithColors.some((s) => s.color === '#FFD166')).toBe(true);

@@ -1,5 +1,5 @@
 {
-  "name": "stadium-lights",
+  "name": "ad-show-lights",
   "version": "1.0.0",
   "private": true,
   "workspaces": [
@@ -10,7 +10,10 @@
     "dev:server": "npm run dev -w @stadium-lights/server",
     "dev:mobile": "npm run start -w @stadium-lights/mobile",
     "build:shared": "npm run build -w @stadium-lights/shared",
-    "build:server": "npm run build -w @stadium-lights/server"
+    "build:server": "npm run build -w @stadium-lights/server",
+    "test:shared": "npm run test -w @stadium-lights/shared",
+    "test:server": "npm run test -w @stadium-lights/server",
+    "test": "npm run test:shared && npm run test:server"
   },
   "engines": {
     "node": ">=18.0.0"

@@ -143,8 +143,8 @@ export default function ParticipantScreen() {
 
       <View style={styles.infoContainer}>
         <View style={styles.infoItem}>
-          <Text style={styles.infoLabel}>Zone</Text>
-          <Text style={styles.infoValue}>{zoneId || 'Unknown'}</Text>
+          <Text style={styles.infoLabel}>Track Stand / Zone</Text>
+          <Text style={styles.infoValue}>{zoneId || '400m Track'}</Text>
         </View>
         <View style={styles.infoItem}>
           <Text style={styles.infoLabel}>Participants</Text>
@@ -153,7 +153,7 @@ export default function ParticipantScreen() {
       </View>
 
       <Text style={styles.instructions}>
-        Keep your phone's flashlight facing up and visible
+        Keep your screen &amp; flashlight facing up towards the stage or field
       </Text>
 
       <ParticipantOnboarding
