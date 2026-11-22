@@ -14,13 +14,16 @@ export interface Zone {
   id: string;
   row: number;
   col: number;
+  section?: string; // e.g. "Track Home Straight", "Track Curve 1", "Track Curve 2", "Field Center", "Stage"
+  house?: string;   // e.g. "red", "blue", "green", "yellow"
+  label?: string;
   bounds: {
     minLat: number;
     maxLat: number;
     minLng: number;
     maxLng: number;
   };
-  // Ring mode properties (calculated from center of stadium)
+  // Ring/Track mode properties (calculated from center of stadium / track)
   angle?: number; // Angle in degrees (0-360) from stadium center
   distance?: number; // Normalized distance from center (0-1)
 }
@@ -29,7 +32,10 @@ export interface ZoneState {
   zoneId: string;
   isOn: boolean;
   brightness?: number; // 0-1, optional for fade effects
+  color?: string; // Hex color for multi-color screen flashlight (e.g., "#FF0000")
 }
+
+export type VenueType = 'track' | 'auditorium' | 'stadium';
 
 export interface Group {
   id: string;
@@ -41,6 +47,7 @@ export interface Group {
   lastActivity: Date;
   expiresAt: Date;
   isCustomCode: boolean;
+  venueType?: VenueType;
 }
 
 export interface Participant {
@@ -51,6 +58,8 @@ export interface Participant {
   latitude: number;
   longitude: number;
   zoneId: string | null;
+  section?: string | null;
+  house?: string | null;
   lastSeen: Date;
 }
 
@@ -63,8 +72,12 @@ export interface PatternConfig {
   duration?: number; // total duration in ms
   density?: number; // 0-1, for sparkle effect
   repeat?: boolean;
-  mode?: PatternMode; // 'grid' or 'ring'
+  mode?: PatternMode; // 'grid', 'ring', or 'track'
   ringDirection?: RingDirection; // 'clockwise' or 'counterclockwise'
+  color?: string; // Hex color for single-color patterns
+  primaryColor?: string; // For dual-color patterns like school pride
+  secondaryColor?: string;
+  houseColors?: { [houseName: string]: string };
 }
 
 export interface ZoneSchedule {

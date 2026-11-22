@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "Stadium Lights",
-    "slug": "stadium-lights",
+    "name": "Annual Day Light Show",
+    "slug": "annual-day-lights",
     "version": "1.0.0",
     "orientation": "portrait",
-    "scheme": "stadiumlights",
+    "scheme": "annualdaylights",
     "userInterfaceStyle": "automatic",
     "splash": {
       "backgroundColor": "#1a1a2e"

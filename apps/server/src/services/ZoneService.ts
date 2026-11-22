@@ -29,6 +29,30 @@ export class ZoneService implements IZoneService, IZoneCalculator {
     return this.findZone(coordinates, zones);
   }
 
+  findZoneBySectionOrHouse(groupId: string, selector: string): string | null {
+    const zones = this.getZones(groupId);
+    if (zones.length === 0) return null;
+    const lower = selector.trim().toLowerCase();
+
+    // Check direct ID first
+    const directMatch = zones.find((z) => z.id.toLowerCase() === lower);
+    if (directMatch) return directMatch.id;
+
+    // Check by house
+    const houseMatches = zones.filter((z) => z.house?.toLowerCase() === lower);
+    if (houseMatches.length > 0) {
+      return houseMatches[Math.floor(houseMatches.length / 2)].id;
+    }
+
+    // Check by section
+    const sectionMatches = zones.filter((z) => z.section?.toLowerCase().includes(lower));
+    if (sectionMatches.length > 0) {
+      return sectionMatches[Math.floor(sectionMatches.length / 2)].id;
+    }
+
+    return zones[0].id;
+  }
+
   clearZones(groupId: string): void {
     this.zonesByGroup.delete(groupId);
   }
@@ -94,10 +118,40 @@ export class ZoneService implements IZoneService, IZoneCalculator {
         // Calculate normalized distance from center (0-1)
         const distance = Math.sqrt(deltaLat * deltaLat + deltaLng * deltaLng) / maxDistance;
 
+        // Calculate 400m Track Section and House Assignment
+        let section = 'Track Straight';
+        let house = 'red';
+        let label = `R${row}C${col}`;
+
+        if (distance < 0.35) {
+          section = 'Field Arena';
+          house = 'all';
+          label = 'Field';
+        } else if (angle >= 315 || angle < 45) {
+          section = 'Track Curve 1';
+          house = 'red';
+          label = 'Curve 1 (Red)';
+        } else if (angle >= 45 && angle < 135) {
+          section = 'Back Straight';
+          house = 'blue';
+          label = 'Straight (Blue)';
+        } else if (angle >= 135 && angle < 225) {
+          section = 'Track Curve 2';
+          house = 'green';
+          label = 'Curve 2 (Green)';
+        } else {
+          section = 'Home Straight & Stage';
+          house = 'yellow';
+          label = 'Stage (Yellow)';
+        }
+
         const zone: Zone = {
           id: `zone-${row}-${col}`,
           row,
           col,
+          section,
+          house,
+          label,
           bounds: {
             minLat: minLat + row * latStep,
             maxLat: minLat + (row + 1) * latStep,

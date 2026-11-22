@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stadium Lights - Pattern Visualizer</title>
+  <title>School Annual Day - 400m Track &amp; Stage Visualizer</title>
   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
   <style>
     * {
@@ -300,8 +300,8 @@
 </head>
 <body>
   <div class="header">
-    <h1>Stadium Lights Visualizer</h1>
-    <p>Real-time pattern visualization for testing</p>
+    <h1>School Annual Day - 400m Track &amp; Stage Visualizer</h1>
+    <p>Real-time synchronized light patterns across outdoor stage and 400m track stands</p>
   </div>
 
   <div class="controls">
@@ -335,7 +335,24 @@
       </div>
     </div>
     <div class="ring-wrapper hidden" id="ringWrapper">
-      <div class="ring-field">FIELD</div>
+      <div class="ring-field">
+        <div style="font-weight: 800; font-size: 13px; letter-spacing: 1px;">CENTER FIELD</div>
+        <div style="font-size: 10px; color: #4ade80;">400m Athletic Track</div>
+      </div>
+      <!-- Outdoor Stage Marker -->
+      <div style="position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); background: #e63946; color: #fff; padding: 4px 18px; border-radius: 4px; font-weight: 900; font-size: 11px; letter-spacing: 2px; box-shadow: 0 0 15px rgba(230,57,70,0.8); z-index: 5;">
+        ★ OUTDOOR STAGE ★
+      </div>
+      <!-- Track Sector Indicators -->
+      <div style="position: absolute; top: 12px; left: 50%; transform: translateX(-50%); font-size: 11px; color: #0077b6; font-weight: bold; background: rgba(0,0,0,0.6); padding: 2px 8px; border-radius: 4px;">
+        BACK STRAIGHT (Blue House)
+      </div>
+      <div style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); font-size: 11px; color: #e63946; font-weight: bold; background: rgba(0,0,0,0.6); padding: 2px 8px; border-radius: 4px;">
+        CURVE 1 (Red House)
+      </div>
+      <div style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); font-size: 11px; color: #2a9d8f; font-weight: bold; background: rgba(0,0,0,0.6); padding: 2px 8px; border-radius: 4px;">
+        CURVE 2 (Green House)
+      </div>
       <div id="ringZones"></div>
     </div>
   </div>
@@ -489,10 +506,10 @@
     function setDisplayMode(mode) {
       currentMode = mode;
       const displayModeEl = document.getElementById('displayMode');
-      if (mode === 'ring') {
+      if (mode === 'ring' || mode === 'track') {
         gridWrapper.classList.add('hidden');
         ringWrapper.classList.remove('hidden');
-        displayModeEl.textContent = 'Ring';
+        displayModeEl.textContent = '400m Track & Stage';
       } else {
         gridWrapper.classList.remove('hidden');
         ringWrapper.classList.add('hidden');
@@ -603,24 +620,33 @@
       }
     }
 
-    function setZoneState(zoneId, isOn) {
+    function setZoneState(zoneId, isOn, color) {
       // Update both grid and ring elements
       const gridElement = zoneElements.get(zoneId);
       const ringElement = ringZoneElements.get(zoneId);
+      const activeColor = color || '#ffd700';
 
       if (gridElement) {
         if (isOn) {
           gridElement.classList.add('on');
+          gridElement.style.backgroundColor = activeColor;
+          gridElement.style.boxShadow = `0 0 20px ${activeColor}, 0 0 40px ${activeColor}`;
         } else {
           gridElement.classList.remove('on');
+          gridElement.style.backgroundColor = '';
+          gridElement.style.boxShadow = '';
         }
       }
 
       if (ringElement) {
         if (isOn) {
           ringElement.classList.add('on');
+          ringElement.style.backgroundColor = activeColor;
+          ringElement.style.boxShadow = `0 0 20px ${activeColor}, 0 0 40px ${activeColor}`;
         } else {
           ringElement.classList.remove('on');
+          ringElement.style.backgroundColor = '';
+          ringElement.style.boxShadow = '';
         }
       }
 
@@ -660,7 +686,7 @@
           if (offset <= elapsed) {
             const states = zoneSchedule[offset];
             for (const state of states) {
-              currentStates.set(state.zoneId, state.isOn);
+              currentStates.set(state.zoneId, { isOn: state.isOn, color: state.color });
             }
           } else {
             break;
@@ -669,8 +695,10 @@
 
         // Apply states
         zoneStates.forEach((_, zoneId) => {
-          const isOn = currentStates.get(zoneId) || false;
-          setZoneState(zoneId, isOn);
+          const state = currentStates.get(zoneId);
+          const isOn = state ? state.isOn : false;
+          const color = state ? state.color : undefined;
+          setZoneState(zoneId, isOn, color);
         });
       }
 

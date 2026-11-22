@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>School Annual Day - QR Generator</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0f1016;
+      color: #fff;
+      padding: 24px;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: #888;
+      margin-bottom: 24px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      background: #191b26;
+      padding: 16px;
+      border-radius: 12px;
+    }
+
+    input {
+      background: #0f1016;
+      border: 1px solid #333;
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 16px;
+      text-transform: uppercase;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    button {
+      background: #ffb703;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .qr-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .qr-card {
+      background: #fff;
+      color: #000;
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      break-inside: avoid;
+    }
+
+    .qr-header {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+
+    .qr-title {
+      font-size: 20px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+
+    .qr-desc {
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 16px;
+    }
+
+    .qr-canvas {
+      width: 200px !important;
+      height: 200px !important;
+      margin-bottom: 12px;
+    }
+
+    .qr-code-text {
+      font-family: monospace;
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      background: #f0f0f0;
+      padding: 4px 12px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+
+    .qr-hint {
+      font-size: 11px;
+      color: #888;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        color: #000;
+      }
+      .controls, h1, p {
+        display: none;
+      }
+      .qr-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Printable QR Codes for 400m Track &amp; Stage Stands</h1>
+    <p>Generate QR cards to project on stage LED screens, print for track stands, or hand out to audience members.</p>
+
+    <div class="controls">
+      <input type="text" id="codeField" placeholder="Group Code (e.g. ANNUAL2024)" value="ANNUAL2024" />
+      <button onclick="renderAllQRs()">Generate QR Cards</button>
+      <button onclick="window.print()" style="background: #28a745; color: #fff;">Print Cards 🖨️</button>
+    </div>
+
+    <div class="qr-grid" id="qrGrid"></div>
+  </div>
+
+  <script>
+    const stands = [
+      {
+        name: 'General Show Access',
+        desc: 'All Audience & Parents (Automatic Selection)',
+        params: ''
+      },
+      {
+        name: 'Red House (Phoenix)',
+        desc: 'Track Curve 1 (East Bend)',
+        params: '&house=red&section=Track%20Curve%201'
+      },
+      {
+        name: 'Blue House (Griffin)',
+        desc: 'Back Straight (North Stand)',
+        params: '&house=blue&section=Back%20Straight'
+      },
+      {
+        name: 'Green House (Pegasus)',
+        desc: 'Track Curve 2 (West Bend)',
+        params: '&house=green&section=Track%20Curve%202'
+      },
+      {
+        name: 'Yellow House (Dragon)',
+        desc: 'Stage & Home Straight (South Stand)',
+        params: '&house=yellow&section=Home%20Straight%20%26%20Stage'
+      }
+    ];
+
+    function renderAllQRs() {
+      const code = document.getElementById('codeField').value.trim().toUpperCase() || 'ANNUAL2024';
+      const container = document.getElementById('qrGrid');
+      container.innerHTML = '';
+
+      stands.forEach((stand, idx) => {
+        const fullUrl = `${window.location.origin}/join?code=${code}${stand.params}`;
+        const card = document.createElement('div');
+        card.className = 'qr-card';
+        card.innerHTML = `
+          <div class="qr-header">School Annual Day Light Show</div>
+          <div class="qr-title">${stand.name}</div>
+          <div class="qr-desc">${stand.desc}</div>
+          <canvas id="qr-${idx}" class="qr-canvas"></canvas>
+          <div class="qr-code-text">CODE: ${code}</div>
+          <div class="qr-hint">Scan with any smartphone camera to sync with the show!</div>
+        `;
+        container.appendChild(card);
+
+        QRCode.toCanvas(document.getElementById(`qr-${idx}`), fullUrl, {
+          width: 200,
+          margin: 1,
+          color: { dark: '#000000', light: '#ffffff' }
+        });
+      });
+    }
+
+    renderAllQRs();
+  </script>
+</body>
+</html>

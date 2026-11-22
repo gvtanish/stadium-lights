@@ -20,8 +20,8 @@ export abstract class BasePattern implements IPattern {
   /**
    * Helper to create a zone state
    */
-  protected createState(zoneId: string, isOn: boolean, brightness = 1): ZoneState {
-    return { zoneId, isOn, brightness: isOn ? brightness : 0 };
+  protected createState(zoneId: string, isOn: boolean, brightness = 1, color?: string): ZoneState {
+    return { zoneId, isOn, brightness: isOn ? brightness : 0, color: isOn ? color : undefined };
   }
 
   /**

@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>School Annual Day - Lights Show</title>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: #0f1016;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      transition: background-color 0.08s ease;
+    }
+
+    /* Screen flashlight full-bleed active mode */
+    body.light-on {
+      background-color: var(--flash-color, #ffffff) !important;
+      color: #000 !important;
+    }
+
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 20px;
+      max-width: 480px;
+      margin: 0 auto;
+      width: 100%;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(255, 183, 3, 0.15);
+      color: #ffb703;
+      border: 1px solid rgba(255, 183, 3, 0.4);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .title {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+      background: linear-gradient(135deg, #fff 0%, #a0a5b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: #7b829a;
+      font-size: 14px;
+    }
+
+    /* Card */
+    .card {
+      background: #191b26;
+      border: 1px solid #282c3f;
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-label {
+      display: block;
+      color: #a0a5b8;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .input {
+      width: 100%;
+      background: #0f1016;
+      border: 1.5px solid #282c3f;
+      border-radius: 12px;
+      padding: 14px 16px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .input:focus {
+      border-color: #ffb703;
+      box-shadow: 0 0 0 3px rgba(255, 183, 3, 0.2);
+    }
+
+    /* House Selection Grid */
+    .house-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .house-btn {
+      background: #0f1016;
+      border: 2px solid #282c3f;
+      border-radius: 12px;
+      padding: 12px 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .house-btn.selected {
+      border-color: #fff;
+      box-shadow: 0 0 14px var(--h-glow, rgba(255,255,255,0.4));
+    }
+
+    .house-btn .house-color-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      margin: 0 auto 6px;
+    }
+
+    .house-btn.red { --h-glow: rgba(230, 57, 70, 0.6); }
+    .house-btn.red .house-color-dot { background: #e63946; }
+    .house-btn.blue { --h-glow: rgba(0, 119, 182, 0.6); }
+    .house-btn.blue .house-color-dot { background: #0077b6; }
+    .house-btn.green { --h-glow: rgba(42, 157, 143, 0.6); }
+    .house-btn.green .house-color-dot { background: #2a9d8f; }
+    .house-btn.yellow { --h-glow: rgba(233, 196, 106, 0.6); }
+    .house-btn.yellow .house-color-dot { background: #e9c46a; }
+
+    .house-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .house-desc {
+      font-size: 11px;
+      color: #7b829a;
+      margin-top: 2px;
+    }
+
+    /* Main Join Button */
+    .btn-join {
+      width: 100%;
+      background: linear-gradient(135deg, #ffb703 0%, #fb8500 100%);
+      color: #000;
+      border: none;
+      border-radius: 14px;
+      padding: 16px;
+      font-size: 17px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(251, 133, 0, 0.35);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .btn-join:active {
+      transform: scale(0.98);
+    }
+
+    /* ========================================= */
+    /* ACTIVE LIGHT SHOW VIEW                    */
+    /* ========================================= */
+    #activeView {
+      display: none;
+      flex: 1;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      text-align: center;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      margin-top: 10px;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #28a745;
+      box-shadow: 0 0 8px #28a745;
+    }
+
+    /* Flash Display Center */
+    .flash-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 40px 0;
+    }
+
+    .wand-icon {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px dashed rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 54px;
+      margin-bottom: 24px;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+
+    body.light-on .wand-icon {
+      background: rgba(0, 0, 0, 0.1);
+      border-color: rgba(0, 0, 0, 0.3);
+      transform: scale(1.12);
+      box-shadow: 0 0 50px rgba(255, 255, 255, 0.9);
+    }
+
+    .current-pattern-title {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    .section-badge {
+      font-size: 14px;
+      font-weight: 600;
+      opacity: 0.8;
+    }
+
+    /* Controls at bottom */
+    .active-footer {
+      width: 100%;
+      max-width: 360px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .torch-toggle-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: inherit;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-leave {
+      background: transparent;
+      border: none;
+      color: inherit;
+      opacity: 0.6;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 8px;
+      text-decoration: underline;
+    }
+
+    /* Instructions callout */
+    .track-hint {
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 13px;
+      color: #a0a5b8;
+      line-height: 1.5;
+      margin-top: 10px;
+    }
+
+    .track-hint strong {
+      color: #ffb703;
+    }
+  </style>
+</head>
+<body>
+  <!-- JOIN VIEW -->
+  <div class="container" id="joinView">
+    <div class="header">
+      <div class="badge">School Annual Day Show</div>
+      <h1 class="title">Stadium Lights</h1>
+      <p class="subtitle">Outdoor Stage &amp; 400m Track Light Show</p>
+    </div>
+
+    <div class="card">
+      <div class="form-group">
+        <label class="form-label">Show Group Code</label>
+        <input type="text" id="groupCodeInput" class="input" placeholder="e.g. ANNUAL2024" maxlength="32" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Choose Your House / Track Stand</label>
+        <div class="house-grid">
+          <div class="house-btn red selected" data-house="red" data-section="Track Curve 1">
+            <div class="house-color-dot"></div>
+            <div class="house-name">Red House</div>
+            <div class="house-desc">Track Curve 1</div>
+          </div>
+          <div class="house-btn blue" data-house="blue" data-section="Back Straight">
+            <div class="house-color-dot"></div>
+            <div class="house-name">Blue House</div>
+            <div class="house-desc">Back Straight</div>
+          </div>
+          <div class="house-btn green" data-house="green" data-section="Track Curve 2">
+            <div class="house-color-dot"></div>
+            <div class="house-name">Green House</div>
+            <div class="house-desc">Track Curve 2</div>
+          </div>
+          <div class="house-btn yellow" data-house="yellow" data-section="Home Straight &amp; Stage">
+            <div class="house-color-dot"></div>
+            <div class="house-name">Yellow House</div>
+            <div class="house-desc">Stage &amp; Straight</div>
+          </div>
+        </div>
+      </div>
+
+      <button id="joinBtn" class="btn-join">Join The Light Show 🔦</button>
+    </div>
+
+    <div class="track-hint">
+      📍 <strong>Tip for 400m Track Audience:</strong> Keep your phone screen facing up towards the stage or field. Your screen will illuminate with synchronized school &amp; house colors!
+    </div>
+  </div>
+
+  <!-- ACTIVE SHOW VIEW -->
+  <div class="container" id="activeView">
+    <div class="status-pill">
+      <div class="pulse-dot"></div>
+      <span id="connectionLabel">Synced with Stage</span>
+      <span>•</span>
+      <span id="participantCount">1</span> participants
+    </div>
+
+    <div class="flash-center">
+      <div class="wand-icon" id="wandIcon">💡</div>
+      <div class="current-pattern-title" id="patternTitle">Waiting for show cue...</div>
+      <div class="section-badge" id="userStandLabel">Red House • Track Curve 1</div>
+    </div>
+
+    <div class="active-footer">
+      <button id="torchToggleBtn" class="torch-toggle-btn">
+        🔦 Enable Rear Camera Flash
+      </button>
+      <button id="leaveBtn" class="btn-leave">Leave / Change House</button>
+    </div>
+  </div>
+
+  <script>
+    // Elements
+    const joinView = document.getElementById('joinView');
+    const activeView = document.getElementById('activeView');
+    const groupCodeInput = document.getElementById('groupCodeInput');
+    const joinBtn = document.getElementById('joinBtn');
+    const wandIcon = document.getElementById('wandIcon');
+    const patternTitle = document.getElementById('patternTitle');
+    const userStandLabel = document.getElementById('userStandLabel');
+    const participantCount = document.getElementById('participantCount');
+    const torchToggleBtn = document.getElementById('torchToggleBtn');
+    const leaveBtn = document.getElementById('leaveBtn');
+
+    let socket = null;
+    let selectedHouse = 'red';
+    let selectedSection = 'Track Curve 1';
+    let myZoneId = null;
+    let serverTimeOffset = 0;
+    let currentExecution = null;
+    let animFrameId = null;
+    let wakeLock = null;
+    let cameraTrack = null;
+    let isTorchEnabled = false;
+
+    // Pre-fill group code from query param
+    const urlParams = new URLSearchParams(window.location.search);
+    const codeParam = urlParams.get('code') || urlParams.get('c');
+    const houseParam = urlParams.get('house') || urlParams.get('h');
+    const zoneParam = urlParams.get('zone');
+
+    if (codeParam) {
+      groupCodeInput.value = codeParam.toUpperCase();
+    }
+
+    // House selection click handlers
+    document.querySelectorAll('.house-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.house-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedHouse = btn.dataset.house;
+        selectedSection = btn.dataset.section;
+      });
+    });
+
+    if (houseParam) {
+      const match = document.querySelector(`.house-btn[data-house="${houseParam.toLowerCase()}"]`);
+      if (match) match.click();
+    }
+
+    // Screen Wake Lock to prevent sleep during performance
+    async function requestWakeLock() {
+      try {
+        if ('wakeLock' in navigator) {
+          wakeLock = await navigator.wakeLock.request('screen');
+          console.log('Screen Wake Lock acquired');
+        }
+      } catch (err) {
+        console.warn('Wake Lock error:', err);
+      }
+    }
+
+    // Camera Torch API
+    async function setupTorch() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert('Camera Flashlight not supported on this browser. Your screen will still sync with vibrant colors!');
+        return;
+      }
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment' }
+        });
+        cameraTrack = stream.getVideoTracks()[0];
+        const capabilities = cameraTrack.getCapabilities ? cameraTrack.getCapabilities() : {};
+        if (capabilities.torch) {
+          isTorchEnabled = true;
+          torchToggleBtn.textContent = '⚡ Rear Flash Enabled';
+          torchToggleBtn.style.background = '#28a745';
+        } else {
+          torchToggleBtn.textContent = 'Screen Colors Only (Torch Unavailable)';
+        }
+      } catch (err) {
+        console.warn('Torch setup error:', err);
+        torchToggleBtn.textContent = 'Screen Colors Active';
+      }
+    }
+
+    function setTorchState(on) {
+      if (!cameraTrack || !isTorchEnabled) return;
+      try {
+        cameraTrack.applyConstraints({
+          advanced: [{ torch: !!on }]
+        });
+      } catch (e) {
+        // Ignored
+      }
+    }
+
+    torchToggleBtn.addEventListener('click', () => {
+      setupTorch();
+    });
+
+    // Join Flow
+    function generateDeviceId() {
+      let id = localStorage.getItem('ad_device_id');
+      if (!id) {
+        id = 'web-' + Math.random().toString(36).substring(2, 10) + '-' + Date.now();
+        localStorage.setItem('ad_device_id', id);
+      }
+      return id;
+    }
+
+    joinBtn.addEventListener('click', () => {
+      const code = groupCodeInput.value.trim().toUpperCase();
+      if (!code) {
+        alert('Please enter a group code');
+        return;
+      }
+
+      joinBtn.disabled = true;
+      joinBtn.textContent = 'Connecting...';
+
+      socket = io(window.location.origin, {
+        transports: ['websocket'],
+      });
+
+      socket.on('connect', () => {
+        console.log('Connected to server, sending join_group');
+        socket.emit('join_group', {
+          code,
+          deviceId: generateDeviceId(),
+          displayName: 'Participant',
+          house: selectedHouse,
+          section: selectedSection,
+          zoneId: zoneParam || undefined,
+        });
+      });
+
+      socket.on('time_sync', (payload) => {
+        serverTimeOffset = payload.serverTime - Date.now();
+      });
+
+      socket.on('group_joined', (payload) => {
+        console.log('Group joined:', payload);
+        myZoneId = payload.zoneId;
+        participantCount.textContent = payload.participantCount || 1;
+        userStandLabel.textContent = `${selectedHouse.toUpperCase()} HOUSE • ${selectedSection}`;
+
+        joinView.style.display = 'none';
+        activeView.style.display = 'flex';
+        requestWakeLock();
+
+        if (payload.activePattern) {
+          startPattern(payload.activePattern);
+        }
+      });
+
+      socket.on('participant_count', (payload) => {
+        participantCount.textContent = payload.count;
+      });
+
+      socket.on('pattern_start', (execution) => {
+        console.log('Pattern started:', execution);
+        startPattern(execution);
+      });
+
+      socket.on('pattern_stop', () => {
+        stopPattern();
+      });
+
+      socket.on('error', (payload) => {
+        alert(payload.message || 'Error occurred');
+        joinBtn.disabled = false;
+        joinBtn.textContent = 'Join The Light Show 🔦';
+      });
+
+      socket.on('disconnect', () => {
+        console.log('Disconnected');
+        stopPattern();
+      });
+    });
+
+    // Pattern Execution Loop (~60fps)
+    function startPattern(execution) {
+      currentExecution = execution;
+      patternTitle.textContent = execution.patternId.replace(/_/g, ' ').toUpperCase();
+
+      if (animFrameId) cancelAnimationFrame(animFrameId);
+
+      const { startTime, duration, zoneSchedule, loop } = execution;
+      const timeOffsets = Object.keys(zoneSchedule).map(Number).sort((a, b) => a - b);
+
+      function frame() {
+        const now = Date.now() + serverTimeOffset;
+        let elapsed = now - startTime;
+
+        if (elapsed >= 0) {
+          if (loop) {
+            elapsed = elapsed % duration;
+          } else if (elapsed >= duration) {
+            stopPattern();
+            return;
+          }
+
+          // Find current zone state
+          let activeState = null;
+          for (const offset of timeOffsets) {
+            if (offset <= elapsed) {
+              const states = zoneSchedule[offset];
+              const mine = states.find(s => s.zoneId === myZoneId);
+              if (mine) activeState = mine;
+            } else {
+              break;
+            }
+          }
+
+          if (activeState && activeState.isOn) {
+            const color = activeState.color || '#FFD700';
+            document.body.classList.add('light-on');
+            document.body.style.setProperty('--flash-color', color);
+            wandIcon.textContent = '🔥';
+            setTorchState(true);
+          } else {
+            document.body.classList.remove('light-on');
+            wandIcon.textContent = '💡';
+            setTorchState(false);
+          }
+        }
+
+        animFrameId = requestAnimationFrame(frame);
+      }
+
+      animFrameId = requestAnimationFrame(frame);
+    }
+
+    function stopPattern() {
+      if (animFrameId) {
+        cancelAnimationFrame(animFrameId);
+        animFrameId = null;
+      }
+      currentExecution = null;
+      document.body.classList.remove('light-on');
+      wandIcon.textContent = '💡';
+      patternTitle.textContent = 'Waiting for cue...';
+      setTorchState(false);
+    }
+
+    leaveBtn.addEventListener('click', () => {
+      stopPattern();
+      if (socket) {
+        socket.disconnect();
+        socket = null;
+      }
+      activeView.style.display = 'none';
+      joinView.style.display = 'flex';
+      joinBtn.disabled = false;
+      joinBtn.textContent = 'Join The Light Show 🔦';
+    });
+  </script>
+</body>
+</html>

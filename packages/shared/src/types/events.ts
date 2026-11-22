@@ -6,13 +6,17 @@ export interface CreateGroupPayload {
   displayName: string;
   stadiumBounds: StadiumBounds;
   gridSize?: { rows: number; cols: number };
-  customCode?: string; // Optional custom code (e.g., "COLDPLAY2024") - if not provided, a random code is generated
+  customCode?: string; // Optional custom code (e.g., "ANNUAL2024") - if not provided, a random code is generated
+  venueType?: 'track' | 'auditorium' | 'stadium';
 }
 
 export interface JoinGroupPayload {
   code: string;
   deviceId: string;
   displayName: string;
+  section?: string;
+  house?: string;
+  zoneId?: string;
 }
 
 export interface UpdateLocationPayload {
@@ -71,6 +75,9 @@ export interface VisualizerZoneData {
   col: number;
   angle?: number;
   distance?: number;
+  section?: string;
+  house?: string;
+  label?: string;
 }
 
 export interface VisualizerJoinedPayload {
@@ -79,6 +86,7 @@ export interface VisualizerJoinedPayload {
   participantCount: number;
   zoneDistribution: Record<string, number>;
   zones: VisualizerZoneData[];
+  venueType?: string;
 }
 
 // Server → Client Events

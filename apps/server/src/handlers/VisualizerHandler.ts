@@ -60,7 +60,11 @@ export class VisualizerHandler implements ISocketHandler {
           col: z.col,
           angle: z.angle,
           distance: z.distance,
+          section: z.section,
+          house: z.house,
+          label: z.label,
         })),
+        venueType: group.venueType || 'track',
       });
 
       console.log(`Visualizer joined group ${payload.code} (groupId: ${group.id})`);

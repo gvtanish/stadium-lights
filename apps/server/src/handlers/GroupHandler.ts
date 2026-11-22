@@ -174,6 +174,16 @@ export class GroupHandler implements ISocketHandler {
         coordinates: { latitude: 0, longitude: 0 },
       });
 
+      // If manual zone, house, or section was provided (e.g. from 400m track QR code or Web Participant)
+      if (payload.zoneId || payload.house || payload.section) {
+        const manualZoneId = payload.zoneId
+          ? this.zoneService.getZone(group.id, payload.zoneId)?.id
+          : this.zoneService.findZoneBySectionOrHouse(group.id, payload.house || payload.section || '');
+        if (manualZoneId) {
+          participant.zoneId = manualZoneId;
+        }
+      }
+
       // Store socket data
       this.storeSocketData({
         deviceId: payload.deviceId,

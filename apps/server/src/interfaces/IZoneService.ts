@@ -22,6 +22,11 @@ export interface IZoneService {
   findZoneForCoordinates(groupId: string, coordinates: Coordinates): string | null;
 
   /**
+   * Finds a zone by house name or section name
+   */
+  findZoneBySectionOrHouse(groupId: string, selector: string): string | null;
+
+  /**
    * Clears zones for a group
    */
   clearZones(groupId: string): void;

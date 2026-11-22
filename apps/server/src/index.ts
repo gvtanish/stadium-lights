@@ -70,9 +70,24 @@ app.get('/visualizer', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/visualizer.html'));
 });
 
+// Web Participant zero-install client
+app.get('/join', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/join.html'));
+});
+
+// QR Code and Printable Stencil generator
+app.get('/qr', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/qr-generator.html'));
+});
+
 // Privacy policy route
 app.get('/privacy', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/privacy.html'));
+});
+
+// Default root serves Web Participant for immediate QR access
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/join.html'));
 });
 
 

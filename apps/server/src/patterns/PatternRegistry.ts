@@ -7,6 +7,11 @@ import { CheckerboardPattern } from './CheckerboardPattern';
 import { SpiralPattern } from './SpiralPattern';
 import { SparklePattern } from './SparklePattern';
 import { ChasePattern } from './ChasePattern';
+import { TrackRelayPattern } from './TrackRelayPattern';
+import { HouseBattlePattern } from './HouseBattlePattern';
+import { LampLightingPattern } from './LampLightingPattern';
+import { SchoolPridePattern } from './SchoolPridePattern';
+import { FinaleCountdownPattern } from './FinaleCountdownPattern';
 
 export class PatternRegistry {
   private patterns = new Map<PatternType, IPattern>();
@@ -16,6 +21,14 @@ export class PatternRegistry {
   }
 
   private registerAllPatterns(): void {
+    // School Annual Day Show patterns
+    this.register(new TrackRelayPattern());
+    this.register(new HouseBattlePattern());
+    this.register(new LampLightingPattern());
+    this.register(new SchoolPridePattern());
+    this.register(new FinaleCountdownPattern());
+
+    // Standard patterns
     this.register(new WavePattern());
     this.register(new PulsePattern());
     this.register(new StrobePattern());
