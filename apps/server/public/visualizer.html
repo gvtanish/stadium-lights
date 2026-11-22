@@ -262,6 +262,134 @@
       box-shadow: 0 0 8px #ffd700;
     }
 
+    /* Controller Panel */
+    .controller-panel {
+      max-width: 760px;
+      margin: 0 auto 24px;
+      display: none;
+    }
+    .controller-panel.visible { display: block; }
+
+    .panel-section {
+      background: #2d2d44;
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 14px;
+    }
+    .panel-section h3 {
+      font-size: 13px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+    }
+
+    .create-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .create-row input {
+      background: #1a1a2e;
+      border: 1px solid #444;
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: #fff;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      width: 180px;
+    }
+    .create-row input::placeholder { color: #555; text-transform: none; letter-spacing: normal; }
+
+    .btn-create {
+      background: #28a745;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 22px;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-weight: 600;
+    }
+    .btn-create:hover { background: #34c759; }
+    .btn-create:disabled { background: #444; cursor: not-allowed; }
+
+    .group-code-display {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .group-code-display.visible { display: flex; }
+    .code-badge {
+      background: #1a1a2e;
+      border: 2px solid #28a745;
+      border-radius: 8px;
+      padding: 8px 18px;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      color: #4ade80;
+    }
+    .code-hint { color: #888; font-size: 13px; }
+    .btn-end {
+      background: #dc3545;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      color: #fff;
+      font-size: 13px;
+      cursor: pointer;
+      margin-left: auto;
+    }
+    .btn-end:hover { background: #e44555; }
+
+    /* Pattern buttons */
+    .pattern-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+    }
+    .btn-pattern {
+      border: none;
+      border-radius: 10px;
+      padding: 14px 16px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.1s, opacity 0.2s;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-pattern:hover { transform: scale(1.03); opacity: 0.9; }
+    .btn-pattern:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    .btn-pattern.active { outline: 3px solid #fff; }
+    .btn-pattern .pat-icon { font-size: 20px; }
+    .btn-pattern .pat-label { font-size: 13px; color: rgba(255,255,255,0.75); font-weight: 400; }
+
+    .btn-stop {
+      background: #555;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 24px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 4px;
+      transition: background 0.2s;
+    }
+    .btn-stop:hover { background: #dc3545; }
+    .btn-stop:disabled { opacity: 0.4; cursor: not-allowed; }
+
     .instructions {
       max-width: 600px;
       margin: 40px auto 0;
@@ -304,9 +432,30 @@
     <p>Real-time synchronized light patterns across outdoor stage and 400m track stands</p>
   </div>
 
-  <div class="controls">
-    <input type="text" id="codeInput" placeholder="Enter group code" maxlength="32" />
-    <button id="connectBtn">Connect</button>
+  <!-- Controls Card: Start Show or Connect -->
+  <div class="panel-section" style="max-width: 760px; margin: 0 auto 20px; background: #2d2d44; border-radius: 12px; padding: 18px 22px;">
+    <div id="unconnectedControls" style="display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+      <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+        <input type="text" id="customCodeInput" placeholder="CODE (OPTIONAL)" maxlength="12" style="background:#1a1a2e; border:1px solid #444; border-radius:8px; padding:10px 14px; color:#fff; text-transform:uppercase; width:160px; font-weight:bold; letter-spacing:1px;" />
+        <button id="createGroupBtn" class="btn-create" style="background:#28a745; border:none; border-radius:8px; padding:11px 20px; color:#fff; font-weight:bold; cursor:pointer; font-size:14px; transition:0.2s;">✨ Start New Show</button>
+      </div>
+      <div style="color: #666; font-size: 13px; font-weight: bold;">— OR —</div>
+      <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+        <input type="text" id="codeInput" placeholder="GROUP CODE" maxlength="32" style="background:#1a1a2e; border:1px solid #444; border-radius:8px; padding:10px 14px; color:#fff; text-transform:uppercase; width:130px; font-weight:bold; letter-spacing:1px;" />
+        <button id="connectBtn" style="background:#4a90d9; border:none; border-radius:8px; padding:11px 20px; color:#fff; font-weight:bold; cursor:pointer; font-size:14px; transition:0.2s;">Connect</button>
+      </div>
+    </div>
+
+    <div id="connectedControls" style="display: none; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <span style="font-size: 12px; color: #888; text-transform: uppercase; font-weight: bold;">Show Code:</span>
+        <span class="code-badge" id="activeCodeBadge" style="background:#1a1a2e; border:2px solid #28a745; border-radius:8px; padding:6px 16px; font-size:22px; font-weight:900; color:#4ade80; letter-spacing:3px;">------</span>
+        <button id="copyCodeBtn" style="background:#3a3a5a; border:none; border-radius:6px; padding:8px 12px; color:#ccc; font-size:12px; cursor:pointer; font-weight:bold;">📋 Copy</button>
+        <a id="qrSheetLink" href="#" target="_blank" style="background:#2563eb; color:#fff; padding:8px 14px; border-radius:6px; font-size:12px; font-weight:bold; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">🖨️ Open QR Cards</a>
+        <a id="joinScreenLink" href="#" target="_blank" style="background:#4b5563; color:#fff; padding:8px 14px; border-radius:6px; font-size:12px; font-weight:bold; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">📱 Join Page</a>
+      </div>
+      <button id="disconnectBtn" style="background:#dc3545; border:none; border-radius:6px; padding:8px 18px; color:#fff; font-size:13px; font-weight:bold; cursor:pointer;">Disconnect</button>
+    </div>
   </div>
 
   <div class="status">
@@ -315,7 +464,7 @@
       <div class="status-value disconnected" id="connectionStatus">Disconnected</div>
     </div>
     <div class="status-item">
-      <div class="status-label">Participants</div>
+      <div class="status-label">Audience Connected</div>
       <div class="status-value" id="participantCount">0</div>
     </div>
     <div class="status-item">
@@ -323,34 +472,110 @@
       <div class="status-value pattern" id="currentPattern">None</div>
     </div>
     <div class="status-item">
-      <div class="status-label">Mode</div>
-      <div class="status-value" id="displayMode">Grid</div>
+      <div class="status-label">Venue Mode</div>
+      <div class="status-value" id="displayMode">400m Track &amp; Stage</div>
+    </div>
+  </div>
+
+  <!-- Show Control Deck (Patterns & Live Triggering) -->
+  <div class="controller-panel visible" id="controllerPanel" style="display: none;">
+    <div class="panel-section">
+      <h3>🎭 Annual Day Show Cues (Tap to Launch Live)</h3>
+      <div class="pattern-grid">
+        <button class="btn-pattern" style="background: linear-gradient(135deg, #d97706, #b45309);" onclick="triggerShowPattern('lamp_lighting')">
+          <span class="pat-icon">🕯️</span>
+          <div>
+            <div>Lamp Lighting</div>
+            <div class="pat-label">Warm amber glow ceremony</div>
+          </div>
+        </button>
+
+        <button class="btn-pattern" style="background: linear-gradient(135deg, #2563eb, #1d4ed8);" onclick="triggerShowPattern('track_relay')">
+          <span class="pat-icon">🏃</span>
+          <div>
+            <div>Track Relay</div>
+            <div class="pat-label">Light sprints around 400m track</div>
+          </div>
+        </button>
+
+        <button class="btn-pattern" style="background: linear-gradient(135deg, #dc2626, #991b1b);" onclick="triggerShowPattern('house_battle')">
+          <span class="pat-icon">🏆</span>
+          <div>
+            <div>House Battle</div>
+            <div class="pat-label">Red vs Blue vs Green vs Yellow</div>
+          </div>
+        </button>
+
+        <button class="btn-pattern" style="background: linear-gradient(135deg, #7c3aed, #5b21b6);" onclick="triggerShowPattern('school_pride')">
+          <span class="pat-icon">🎓</span>
+          <div>
+            <div>School Pride</div>
+            <div class="pat-label">Concentric ripples in school colors</div>
+          </div>
+        </button>
+
+        <button class="btn-pattern" style="background: linear-gradient(135deg, #ec4899, #be185d);" onclick="triggerShowPattern('finale_countdown')">
+          <span class="pat-icon">🎆</span>
+          <div>
+            <div>Finale Countdown</div>
+            <div class="pat-label">5-4-3-2-1 + explosive strobe</div>
+          </div>
+        </button>
+
+        <button class="btn-pattern" style="background: linear-gradient(135deg, #0284c7, #0369a1);" onclick="triggerShowPattern('wave')">
+          <span class="pat-icon">🌊</span>
+          <div>
+            <div>Stadium Wave</div>
+            <div class="pat-label">Continuous circular wave</div>
+          </div>
+        </button>
+
+        <button class="btn-pattern" style="background: linear-gradient(135deg, #eab308, #ca8a04);" onclick="triggerShowPattern('strobe')">
+          <span class="pat-icon">⚡</span>
+          <div>
+            <div>Strobe All</div>
+            <div class="pat-label">High-energy synchronized flash</div>
+          </div>
+        </button>
+      </div>
+
+      <div style="margin-top: 14px;">
+        <button class="btn-stop" onclick="stopCurrentPattern()">🛑 STOP ALL LIGHTS (BLACKOUT)</button>
+      </div>
+
+      <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid #444; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+        <span style="font-size: 12px; color: #888;">Audience Simulation / Test:</span>
+        <button style="background:#374151; border:none; border-radius:6px; padding:7px 14px; color:#fff; font-size:12px; font-weight:bold; cursor:pointer;" onclick="spawnMockStudents(50)">👥 Spawn 50 Test Students</button>
+        <button style="background:#374151; border:none; border-radius:6px; padding:7px 14px; color:#fff; font-size:12px; font-weight:bold; cursor:pointer;" onclick="clearMockStudents()">🧹 Clear Test Students</button>
+      </div>
     </div>
   </div>
 
   <div class="visualizer-container">
-    <div class="grid-wrapper" id="gridWrapper">
+    <div class="grid-wrapper hidden" id="gridWrapper">
       <div class="grid" id="grid">
-        <div style="color: #666; padding: 40px;">Enter a group code to view the stadium grid</div>
+        <div style="color: #666; padding: 40px;">Click 'Start New Show' or connect to a group code</div>
       </div>
     </div>
-    <div class="ring-wrapper hidden" id="ringWrapper">
+    <div class="ring-wrapper" id="ringWrapper">
       <div class="ring-field">
-        <div style="font-weight: 800; font-size: 13px; letter-spacing: 1px;">CENTER FIELD</div>
-        <div style="font-size: 10px; color: #4ade80;">400m Athletic Track</div>
+        <div style="text-align: center;">
+          <div style="font-weight: 800; font-size: 13px; letter-spacing: 1px;">CENTER FIELD</div>
+          <div style="font-size: 10px; color: #4ade80;">400m Athletic Running Track</div>
+        </div>
       </div>
       <!-- Outdoor Stage Marker -->
-      <div style="position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); background: #e63946; color: #fff; padding: 4px 18px; border-radius: 4px; font-weight: 900; font-size: 11px; letter-spacing: 2px; box-shadow: 0 0 15px rgba(230,57,70,0.8); z-index: 5;">
+      <div style="position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); background: #e63946; color: #fff; padding: 5px 22px; border-radius: 6px; font-weight: 900; font-size: 12px; letter-spacing: 2px; box-shadow: 0 0 18px rgba(230,57,70,0.9); z-index: 5;">
         ★ OUTDOOR STAGE ★
       </div>
       <!-- Track Sector Indicators -->
-      <div style="position: absolute; top: 12px; left: 50%; transform: translateX(-50%); font-size: 11px; color: #0077b6; font-weight: bold; background: rgba(0,0,0,0.6); padding: 2px 8px; border-radius: 4px;">
+      <div style="position: absolute; top: 12px; left: 50%; transform: translateX(-50%); font-size: 11px; color: #38bdf8; font-weight: bold; background: rgba(0,0,0,0.7); padding: 3px 10px; border-radius: 4px; border: 1px solid #0284c7;">
         BACK STRAIGHT (Blue House)
       </div>
-      <div style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); font-size: 11px; color: #e63946; font-weight: bold; background: rgba(0,0,0,0.6); padding: 2px 8px; border-radius: 4px;">
+      <div style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); font-size: 11px; color: #f87171; font-weight: bold; background: rgba(0,0,0,0.7); padding: 3px 10px; border-radius: 4px; border: 1px solid #dc2626;">
         CURVE 1 (Red House)
       </div>
-      <div style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); font-size: 11px; color: #2a9d8f; font-weight: bold; background: rgba(0,0,0,0.6); padding: 2px 8px; border-radius: 4px;">
+      <div style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); font-size: 11px; color: #4ade80; font-weight: bold; background: rgba(0,0,0,0.7); padding: 3px 10px; border-radius: 4px; border: 1px solid #16a34a;">
         CURVE 2 (Green House)
       </div>
       <div id="ringZones"></div>
@@ -369,21 +594,33 @@
   </div>
 
   <div class="instructions">
-    <h2>How to use</h2>
+    <h2>Annual Day Quick Start</h2>
     <ol>
-      <li>Create a group in the Stadium Lights mobile app</li>
-      <li>Enter the group code above and click Connect</li>
-      <li>Spawn mock participants from the controller screen</li>
-      <li>Trigger patterns and watch them animate here</li>
+      <li>Click <strong>Start New Show</strong> above (or enter your custom code like <code>ANNUAL</code>).</li>
+      <li>Click <strong>Open QR Cards</strong> to print or display QR codes at each track stand/house.</li>
+      <li>Students scan QR on their phones to enter without installing anything.</li>
+      <li>Tap any pattern button in the <strong>Show Cues</strong> panel to synchronize all audience screens in real-time!</li>
     </ol>
   </div>
 
   <script>
     const codeInput = document.getElementById('codeInput');
+    const customCodeInput = document.getElementById('customCodeInput');
     const connectBtn = document.getElementById('connectBtn');
+    const createGroupBtn = document.getElementById('createGroupBtn');
+    const disconnectBtn = document.getElementById('disconnectBtn');
+    const copyCodeBtn = document.getElementById('copyCodeBtn');
+    const qrSheetLink = document.getElementById('qrSheetLink');
+    const joinScreenLink = document.getElementById('joinScreenLink');
+    const activeCodeBadge = document.getElementById('activeCodeBadge');
+    const unconnectedControls = document.getElementById('unconnectedControls');
+    const connectedControls = document.getElementById('connectedControls');
+    const controllerPanel = document.getElementById('controllerPanel');
+
     const connectionStatus = document.getElementById('connectionStatus');
     const participantCount = document.getElementById('participantCount');
     const currentPattern = document.getElementById('currentPattern');
+    const displayMode = document.getElementById('displayMode');
     const grid = document.getElementById('grid');
     const gridWrapper = document.getElementById('gridWrapper');
     const ringWrapper = document.getElementById('ringWrapper');
@@ -395,39 +632,62 @@
     let ringZoneElements = new Map();
     let zoneStates = new Map();
     let zoneParticipantCounts = new Map();
-    let zoneData = []; // Store zone data with angle/distance
+    let zoneData = [];
     let patternInterval = null;
     let currentExecution = null;
-    let currentMode = 'grid';
+    let currentMode = 'track';
+    let currentGroupCode = '';
+    let currentGroupId = '';
+    let isController = false;
 
-    function connect() {
-      const code = codeInput.value.trim().toUpperCase();
-      if (!code) {
-        alert('Please enter a group code');
-        return;
+    function getOrCreateDeviceId() {
+      let id = localStorage.getItem('ad_show_controller_id');
+      if (!id) {
+        id = 'ctrl-' + Math.random().toString(36).substring(2, 9) + '-' + Date.now();
+        localStorage.setItem('ad_show_controller_id', id);
       }
+      return id;
+    }
 
+    function initSocket() {
       if (socket) {
         socket.disconnect();
       }
-
       socket = io(window.location.origin, {
         transports: ['websocket'],
       });
 
       socket.on('connect', () => {
-        console.log('Connected to server');
-        socket.emit('join_visualizer', { code });
+        console.log('Socket connected to server:', socket.id);
+      });
+
+      socket.on('group_created', (data) => {
+        console.log('Group created:', data);
+        currentGroupId = data.groupId;
+        currentGroupCode = data.code;
+        isController = true;
+        localStorage.setItem('ad_last_group_code', data.code);
+        localStorage.setItem('ad_last_group_id', data.groupId);
+        updateConnectedUI(data.code);
+        // Also register as visualizer on this socket
+        socket.emit('join_visualizer', { code: data.code });
+      });
+
+      socket.on('group_resumed', (data) => {
+        console.log('Group resumed:', data);
+        currentGroupId = data.groupId;
+        currentGroupCode = data.code;
+        isController = true;
+        updateConnectedUI(data.code);
+        socket.emit('join_visualizer', { code: data.code });
       });
 
       socket.on('visualizer_joined', (payload) => {
-        console.log('Joined as visualizer:', payload);
+        console.log('Visualizer joined:', payload);
         connectionStatus.textContent = 'Connected';
         connectionStatus.className = 'status-value connected';
-        connectBtn.textContent = 'Disconnect';
-        connectBtn.className = 'disconnect';
-        codeInput.disabled = true;
 
+        currentGroupId = payload.groupId;
         gridSize = payload.gridSize;
         zoneData = payload.zones || [];
         participantCount.textContent = payload.participantCount;
@@ -435,6 +695,7 @@
         createGrid(gridSize.rows, gridSize.cols);
         createRingLayout(zoneData);
         updateZoneDistribution(payload.zoneDistribution);
+        setDisplayMode('track');
       });
 
       socket.on('participant_count', (payload) => {
@@ -447,10 +708,8 @@
         currentPattern.textContent = execution.patternId;
         currentExecution = execution;
 
-        // Switch display mode based on pattern mode
-        const mode = execution.mode || 'grid';
+        const mode = execution.mode || 'track';
         setDisplayMode(mode);
-
         startPatternExecution(execution);
       });
 
@@ -461,20 +720,90 @@
       });
 
       socket.on('time_sync', (payload) => {
-        // Store server time offset for accurate pattern timing
         window.serverTimeOffset = payload.serverTime - Date.now();
       });
 
       socket.on('error', (payload) => {
-        console.error('Error:', payload);
-        alert(payload.message);
-        disconnect();
+        console.error('Socket error:', payload);
+        alert(payload.message || 'An error occurred');
       });
 
       socket.on('disconnect', () => {
-        console.log('Disconnected');
-        disconnect();
+        console.log('Socket disconnected');
+        onDisconnectedUI();
       });
+    }
+
+    function createNewShow() {
+      const customCode = customCodeInput.value.trim().toUpperCase();
+      const deviceId = getOrCreateDeviceId();
+
+      initSocket();
+
+      const stadiumBounds = {
+        topLeft: { latitude: 37.775, longitude: -122.420 },
+        topRight: { latitude: 37.775, longitude: -122.417 },
+        bottomLeft: { latitude: 37.773, longitude: -122.420 },
+        bottomRight: { latitude: 37.773, longitude: -122.417 },
+      };
+
+      socket.emit('create_group', {
+        deviceId,
+        displayName: 'Annual Day Controller',
+        stadiumBounds,
+        gridSize: { rows: 10, cols: 10 },
+        customCode: customCode || undefined,
+        venueType: 'track',
+      });
+    }
+
+    function connectToGroup() {
+      const code = codeInput.value.trim().toUpperCase();
+      if (!code) {
+        alert('Please enter a group code');
+        return;
+      }
+
+      currentGroupCode = code;
+      initSocket();
+
+      // If we previously created this group on this browser, resume as controller
+      const savedCode = localStorage.getItem('ad_last_group_code');
+      const savedGroupId = localStorage.getItem('ad_last_group_id');
+      const deviceId = getOrCreateDeviceId();
+
+      if (savedCode === code && savedGroupId) {
+        socket.emit('resume_group', { deviceId, groupId: savedGroupId });
+      } else {
+        updateConnectedUI(code);
+        socket.emit('join_visualizer', { code });
+      }
+    }
+
+    function updateConnectedUI(code) {
+      currentGroupCode = code;
+      activeCodeBadge.textContent = code;
+      qrSheetLink.href = `/qr?code=${code}`;
+      joinScreenLink.href = `/join?code=${code}`;
+
+      unconnectedControls.style.display = 'none';
+      connectedControls.style.display = 'flex';
+      controllerPanel.style.display = 'block';
+
+      connectionStatus.textContent = 'Connected';
+      connectionStatus.className = 'status-value connected';
+    }
+
+    function onDisconnectedUI() {
+      unconnectedControls.style.display = 'flex';
+      connectedControls.style.display = 'none';
+      controllerPanel.style.display = 'none';
+
+      connectionStatus.textContent = 'Disconnected';
+      connectionStatus.className = 'status-value disconnected';
+      currentPattern.textContent = 'None';
+      participantCount.textContent = '0';
+      stopPatternExecution();
     }
 
     function disconnect() {
@@ -482,38 +811,52 @@
         socket.disconnect();
         socket = null;
       }
+      onDisconnectedUI();
+    }
 
-      stopPatternExecution();
-      connectionStatus.textContent = 'Disconnected';
-      connectionStatus.className = 'status-value disconnected';
-      connectBtn.textContent = 'Connect';
-      connectBtn.className = '';
-      codeInput.disabled = false;
-      currentPattern.textContent = 'None';
-      participantCount.textContent = '0';
+    function triggerShowPattern(patternId) {
+      if (!socket || !socket.connected) {
+        alert('Not connected! Please click Start New Show first.');
+        return;
+      }
+      console.log('Triggering pattern:', patternId);
+      socket.emit('trigger_pattern', {
+        patternId: patternId,
+        config: {
+          speedMultiplier: 1.0,
+          mode: 'track',
+        },
+      });
+    }
 
-      // Clear ring elements
-      ringZoneElements.clear();
-      ringZones.innerHTML = '';
-      zoneData = [];
-      setDisplayMode('grid');
+    function stopCurrentPattern() {
+      if (socket && socket.connected) {
+        socket.emit('stop_pattern');
+      }
+    }
 
-      // Reset grid to placeholder
-      grid.innerHTML = '<div style="color: #666; padding: 40px;">Enter a group code to view the stadium grid</div>';
-      zoneElements.clear();
+    function spawnMockStudents(count) {
+      if (socket && socket.connected) {
+        socket.emit('spawn_mock_participants', { count: count || 50 });
+      }
+    }
+
+    function clearMockStudents() {
+      if (socket && socket.connected) {
+        socket.emit('clear_mock_participants');
+      }
     }
 
     function setDisplayMode(mode) {
       currentMode = mode;
-      const displayModeEl = document.getElementById('displayMode');
       if (mode === 'ring' || mode === 'track') {
         gridWrapper.classList.add('hidden');
         ringWrapper.classList.remove('hidden');
-        displayModeEl.textContent = '400m Track & Stage';
+        displayMode.textContent = '400m Track & Stage';
       } else {
         gridWrapper.classList.remove('hidden');
         ringWrapper.classList.add('hidden');
-        displayModeEl.textContent = 'Grid';
+        displayMode.textContent = 'Grid';
       }
     }
 
@@ -524,11 +867,6 @@
       zoneStates.clear();
       zoneParticipantCounts.clear();
 
-      // Calculate center and threshold for "donut hole"
-      const centerRow = (rows - 1) / 2;
-      const centerCol = (cols - 1) / 2;
-
-      // Define the rectangular hole in the center (as fraction of grid)
       const holeRowStart = Math.floor(rows * 0.3);
       const holeRowEnd = Math.ceil(rows * 0.7);
       const holeColStart = Math.floor(cols * 0.35);
@@ -538,8 +876,6 @@
         for (let col = 0; col < cols; col++) {
           const zoneId = `zone-${row}-${col}`;
           const zone = document.createElement('div');
-
-          // Check if this zone is in the center "hole"
           const isCenter = row >= holeRowStart && row < holeRowEnd &&
                           col >= holeColStart && col < holeColEnd;
 
@@ -554,20 +890,17 @@
           zoneParticipantCounts.set(zoneId, 0);
         }
       }
-
     }
 
     function createRingLayout(zones) {
       ringZones.innerHTML = '';
       ringZoneElements.clear();
 
-      // Ring dimensions - oval shape
       const containerWidth = 600;
       const containerHeight = 400;
       const centerX = containerWidth / 2;
       const centerY = containerHeight / 2;
 
-      // Outer and inner radii for the ring (oval)
       const outerRadiusX = containerWidth * 0.48;
       const outerRadiusY = containerHeight * 0.48;
       const innerRadiusX = containerWidth * 0.22;
@@ -578,14 +911,10 @@
         const angle = z.angle ?? 0;
         const distance = z.distance ?? 0.5;
 
-        // Convert angle to radians (adjust so 0 is at top)
         const radians = (angle - 90) * (Math.PI / 180);
-
-        // Interpolate between inner and outer radius based on distance
         const radiusX = innerRadiusX + (outerRadiusX - innerRadiusX) * distance;
         const radiusY = innerRadiusY + (outerRadiusY - innerRadiusY) * distance;
 
-        // Calculate position
         const x = centerX + radiusX * Math.cos(radians);
         const y = centerY + radiusY * Math.sin(radians);
 
@@ -602,26 +931,24 @@
     }
 
     function updateZoneDistribution(distribution) {
-      // Reset all counts to 0
+      if (!distribution) return;
       zoneElements.forEach((element, zoneId) => {
         const countEl = element.querySelector('.zone-count');
-        countEl.textContent = '0';
+        if (countEl) countEl.textContent = '0';
         zoneParticipantCounts.set(zoneId, 0);
       });
 
-      // Update with actual counts
       for (const [zoneId, count] of Object.entries(distribution)) {
         const element = zoneElements.get(zoneId);
         if (element) {
           const countEl = element.querySelector('.zone-count');
-          countEl.textContent = count;
+          if (countEl) countEl.textContent = count;
           zoneParticipantCounts.set(zoneId, count);
         }
       }
     }
 
     function setZoneState(zoneId, isOn, color) {
-      // Update both grid and ring elements
       const gridElement = zoneElements.get(zoneId);
       const ringElement = ringZoneElements.get(zoneId);
       const activeColor = color || '#ffd700';
@@ -661,15 +988,13 @@
       stopPatternExecution();
 
       const { startTime, duration, zoneSchedule, loop } = execution;
-
-      // Sort time offsets
       const timeOffsets = Object.keys(zoneSchedule).map(Number).sort((a, b) => a - b);
 
       function updateState() {
         const serverTime = getServerTime();
         let elapsed = serverTime - startTime;
 
-        if (elapsed < 0) return; // Pattern hasn't started yet
+        if (elapsed < 0) return;
 
         if (loop) {
           elapsed = elapsed % duration;
@@ -679,7 +1004,6 @@
           return;
         }
 
-        // Find the most recent state for each zone
         const currentStates = new Map();
 
         for (const offset of timeOffsets) {
@@ -693,7 +1017,6 @@
           }
         }
 
-        // Apply states
         zoneStates.forEach((_, zoneId) => {
           const state = currentStates.get(zoneId);
           const isOn = state ? state.isOn : false;
@@ -702,7 +1025,6 @@
         });
       }
 
-      // Update at 60fps for smooth animation
       patternInterval = setInterval(updateState, 16);
       updateState();
     }
@@ -713,37 +1035,48 @@
         patternInterval = null;
       }
 
-      // Turn off all zones
       zoneStates.forEach((_, zoneId) => {
         setZoneState(zoneId, false);
       });
 
       currentExecution = null;
-
-      // Reset to grid mode when pattern stops
-      setDisplayMode('grid');
+      setDisplayMode('track');
     }
 
-    connectBtn.addEventListener('click', () => {
-      if (socket && socket.connected) {
-        disconnect();
-      } else {
-        connect();
+    createGroupBtn.addEventListener('click', createNewShow);
+    connectBtn.addEventListener('click', connectToGroup);
+    disconnectBtn.addEventListener('click', disconnect);
+
+    copyCodeBtn.addEventListener('click', () => {
+      if (currentGroupCode) {
+        navigator.clipboard.writeText(currentGroupCode);
+        copyCodeBtn.textContent = '✅ Copied!';
+        setTimeout(() => { copyCodeBtn.textContent = '📋 Copy'; }, 2000);
       }
     });
 
     codeInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        connect();
-      }
+      if (e.key === 'Enter') connectToGroup();
+    });
+    customCodeInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') createNewShow();
     });
 
-    // Auto-uppercase input
     codeInput.addEventListener('input', () => {
       codeInput.value = codeInput.value.toUpperCase();
     });
+    customCodeInput.addEventListener('input', () => {
+      customCodeInput.value = customCodeInput.value.toUpperCase();
+    });
 
-    // Initialize server time offset
+    // Auto-fill from query parameter if present: /visualizer?code=ABC
+    const urlParams = new URLSearchParams(window.location.search);
+    const paramCode = urlParams.get('code');
+    if (paramCode) {
+      codeInput.value = paramCode.toUpperCase();
+      connectToGroup();
+    }
+
     window.serverTimeOffset = 0;
   </script>
 </body>
